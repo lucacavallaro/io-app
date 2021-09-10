@@ -6,7 +6,6 @@ import { serverInfoDataSelector } from "../../store/reducers/backendInfo";
 import { isBackendServicesStatusOffSelector } from "../../store/reducers/backendStatus";
 import { GlobalState } from "../../store/reducers/types";
 import { isUpdateNeeded } from "../../utils/appVersion";
-import IdentificationModal from "./IdentificationModal";
 import SystemOffModal from "./SystemOffModal";
 import UpdateAppModal from "./UpdateAppModal";
 
@@ -34,7 +33,7 @@ export const RootModal: React.FunctionComponent<Props> = (props: Props) => {
     });
     return <UpdateAppModal />;
   }
-  return <IdentificationModal />;
+  return null;
 };
 
 const mapStateToProps = (state: GlobalState) => ({

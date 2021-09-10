@@ -17,12 +17,8 @@ import VersionInfoOverlay from "./components/VersionInfoOverlay";
 import {
   bpdApiSitUrlPrefix,
   bpdApiUatUrlPrefix,
-  bpdApiUrlPrefix,
-  bpdTestOverlay,
-  cgnTestOverlay,
-  shouldDisplayVersionInfoOverlay
+  bpdApiUrlPrefix
 } from "./config";
-import Navigation from "./navigation";
 import {
   applicationChangeState,
   ApplicationState
@@ -33,9 +29,8 @@ import { GlobalState } from "./store/reducers/types";
 import { getNavigateActionFromDeepLink } from "./utils/deepLink";
 
 import { setLocale } from "./i18n";
-import RootModal from "./screens/modal/RootModal";
 import { preferredLanguageSelector } from "./store/reducers/persistedPreferences";
-import { BetaTestingOverlay } from "./components/BetaTestingOverlay";
+import { Counter } from "./screens/modal/IdentificationModal";
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
@@ -150,21 +145,7 @@ class RootContainer extends React.PureComponent<Props> {
 
     return (
       <Root>
-        <StatusBar barStyle={"dark-content"} />
-        {Platform.OS === "android" && <FlagSecureComponent />}
-        <Navigation />
-        {shouldDisplayVersionInfoOverlay && <VersionInfoOverlay />}
-        {cgnTestOverlay && (
-          <BetaTestingOverlay title="🛠️ CGN TEST VERSION 🛠️" />
-        )}
-        {bpdTestOverlay && (
-          <BetaTestingOverlay
-            title="🛠️ BPD TEST VERSION 🛠️"
-            body={bpdEndpointStr}
-          />
-        )}
-        <RootModal />
-        <LightModalRoot />
+        <Counter />
       </Root>
     );
   }
