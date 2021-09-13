@@ -402,6 +402,8 @@ PODS:
     - React
   - ReactNativeExceptionHandler (2.10.8):
     - React
+  - rn-fetch-blob (0.12.0):
+    - React-Core
   - RNCalendarEvents (2.2.0):
     - React
   - RNCAsyncStorage (1.11.0):
@@ -522,6 +524,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativeART (from `../node_modules/@react-native-community/art/ReactNativeART.podspec`)"
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNCalendarEvents (from `../node_modules/react-native-calendar-events`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
@@ -673,6 +676,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/@react-native-community/art/ReactNativeART.podspec"
   ReactNativeExceptionHandler:
     :path: "../node_modules/react-native-exception-handler"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNCalendarEvents:
     :path: "../node_modules/react-native-calendar-events"
   RNCAsyncStorage:
@@ -781,6 +786,7 @@ SPEC CHECKSUMS:
   ReactCommon: 149906e01aa51142707a10665185db879898e966
   ReactNativeART: 78edc68dd4a1e675338cd0cd113319cf3a65f2ab
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCalendarEvents: 7e65eb4a94f53c1744d1e275f7fafcfaa619f7a3
   RNCAsyncStorage: d059c3ee71738c39834a627476322a5a8cd5bf36
   RNCClipboard: ddd4d291537f1667209c9c405aaa4307297e252e

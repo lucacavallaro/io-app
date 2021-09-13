@@ -1,28 +1,12 @@
-import { Root } from "native-base";
+import { Content, Root, Text } from "native-base";
 import * as React from "react";
-import {
-  AppState,
-  BackHandler,
-  Linking,
-  Platform,
-  StatusBar
-} from "react-native";
+import { AppState, BackHandler, Linking, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { connect } from "react-redux";
+import * as RNFS from "react-native-fs";
+import RNFetchBlob from "rn-fetch-blob";
 import { initialiseInstabug } from "./boot/configureInstabug";
 import configurePushNotifications from "./boot/configurePushNotification";
-import FlagSecureComponent from "./components/FlagSecure";
-import { LightModalRoot } from "./components/ui/LightModal";
-import VersionInfoOverlay from "./components/VersionInfoOverlay";
-import {
-  bpdApiSitUrlPrefix,
-  bpdApiUatUrlPrefix,
-  bpdApiUrlPrefix,
-  bpdTestOverlay,
-  cgnTestOverlay,
-  shouldDisplayVersionInfoOverlay
-} from "./config";
-import Navigation from "./navigation";
 import {
   applicationChangeState,
   ApplicationState
@@ -33,11 +17,32 @@ import { GlobalState } from "./store/reducers/types";
 import { getNavigateActionFromDeepLink } from "./utils/deepLink";
 
 import { setLocale } from "./i18n";
-import RootModal from "./screens/modal/RootModal";
 import { preferredLanguageSelector } from "./store/reducers/persistedPreferences";
-import { BetaTestingOverlay } from "./components/BetaTestingOverlay";
-
+import ButtonDefaultOpacity from "./components/ButtonDefaultOpacity";
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+
+const downloadPdf = async () => {
+  const fPath = Platform.select({
+    ios: RNFS.DocumentDirectoryPath,
+    default: RNFS.DownloadDirectoryPath
+  });
+  RNFetchBlob.config({
+    // response data will be saved to this path if it has access right.
+    path: fPath + "/test.pdf"
+  })
+    .fetch(
+      "GET",
+      "http://127.0.0.1:3000/api/v1/mitvoucher/data/rest/secured/beneficiario/stampaVoucher",
+      {
+        // some headers ..
+      }
+    )
+    .then(res => {
+      // the path should be dirs.DocumentDir + 'path-to-file.anything'
+      console.log("The file saved to ", res.path());
+    })
+    .catch(e => console.error(e));
+};
 
 /**
  * The main container of the application with:
@@ -141,30 +146,13 @@ class RootContainer extends React.PureComponent<Props> {
 
     // if we have no information about the backend, don't force the update
 
-    const bpdEndpointStr =
-      bpdApiUrlPrefix === bpdApiSitUrlPrefix
-        ? "SIT"
-        : bpdApiUrlPrefix === bpdApiUatUrlPrefix
-        ? "UAT"
-        : "PROD";
-
     return (
       <Root>
-        <StatusBar barStyle={"dark-content"} />
-        {Platform.OS === "android" && <FlagSecureComponent />}
-        <Navigation />
-        {shouldDisplayVersionInfoOverlay && <VersionInfoOverlay />}
-        {cgnTestOverlay && (
-          <BetaTestingOverlay title="🛠️ CGN TEST VERSION 🛠️" />
-        )}
-        {bpdTestOverlay && (
-          <BetaTestingOverlay
-            title="🛠️ BPD TEST VERSION 🛠️"
-            body={bpdEndpointStr}
-          />
-        )}
-        <RootModal />
-        <LightModalRoot />
+        <Content>
+          <ButtonDefaultOpacity onPress={downloadPdf}>
+            <Text>{"download pdf"}</Text>
+          </ButtonDefaultOpacity>
+        </Content>
       </Root>
     );
   }
