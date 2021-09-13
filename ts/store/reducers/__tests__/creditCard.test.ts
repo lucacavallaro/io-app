@@ -21,6 +21,7 @@ import {
 } from "../../actions/wallet/wallets";
 import { Action } from "../../actions/types";
 import { addCreditCardOutcomeCode } from "../../actions/wallet/outcomeCode";
+import { differentProfileLoggedIn } from "../../actions/crossSessions";
 
 const creditCardToAdd: NullableWallet = {
   creditCard: {
@@ -264,6 +265,13 @@ describe("credit card history", () => {
     );
     const [cardItem] = state;
     expect(cardItem.payNavigationUrls).toEqual(urls);
+  });
+
+  it("with a different profile logged in should flush the history", () => {
+    const state1 = runReducer([], addCCAction);
+    expect(state1.length).toEqual(1);
+    const state2 = runReducer(state1, differentProfileLoggedIn());
+    expect(state2.length).toEqual(0);
   });
 });
 

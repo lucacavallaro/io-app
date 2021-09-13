@@ -32,6 +32,7 @@ import { GlobalState } from "../types";
 import { paymentOutcomeCode } from "../../actions/wallet/outcomeCode";
 import { fetchTransactionSuccess } from "../../actions/wallet/transactions";
 import { getLookUpId } from "../../../utils/pmLookUpId";
+import { differentProfileLoggedIn } from "../../actions/crossSessions";
 
 export type PaymentHistory = {
   started_at: string;
@@ -143,6 +144,7 @@ const reducer = (
         ...state[state.length - 1],
         webViewCloseReason: action.payload
       });
+    case getType(differentProfileLoggedIn):
     case getType(clearCache): {
       return INITIAL_STATE;
     }

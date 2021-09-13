@@ -16,6 +16,7 @@ import reducer, {
   PaymentsHistoryState
 } from "../payments/history";
 import { paymentOutcomeCode } from "../../actions/wallet/outcomeCode";
+import { differentProfileLoggedIn } from "../../actions/crossSessions";
 // eslint-disable-next-line
 let state: PaymentsHistoryState = [];
 
@@ -201,5 +202,18 @@ describe("payments history", () => {
       );
     });
     expect(state.length).toBeLessThanOrEqual(HISTORY_SIZE);
+  });
+
+  it("with a different profile logged in should flush the history", () => {
+    state = reducer(
+      state,
+      paymentVerifica.request({
+        ...anRptId,
+        organizationFiscalCode: `123098` as OrganizationFiscalCode
+      })
+    );
+    expect(state.length).toBeGreaterThan(1);
+    const emptyState = reducer(state, differentProfileLoggedIn());
+    expect(emptyState.length).toEqual(0);
   });
 });

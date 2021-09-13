@@ -18,6 +18,7 @@ import { clearCache } from "../../actions/profile";
 import { GlobalState } from "../types";
 import { addCreditCardOutcomeCode } from "../../actions/wallet/outcomeCode";
 import { getLookUpId } from "../../../utils/pmLookUpId";
+import { differentProfileLoggedIn } from "../../actions/crossSessions";
 
 export type CreditCardInsertion = {
   startDate: Date;
@@ -149,10 +150,10 @@ const reducer = (
         ...attempt,
         webViewCloseReason: action.payload
       }));
+    case getType(differentProfileLoggedIn):
     case getType(clearCache): {
       return INITIAL_STATE;
     }
-
     default:
       return state;
   }
