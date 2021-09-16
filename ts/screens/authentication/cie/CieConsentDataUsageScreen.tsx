@@ -98,6 +98,7 @@ class CieConsentDataUsageScreen extends React.Component<Props, State> {
     });
   };
 
+  private loadedUrls: Set<string> = new Set<string>();
   private handleShouldStartLoading = (event: WebViewNavigation): boolean => {
     const isLoginUrlWithToken = onLoginUriChanged(
       this.handleLoginFailure,
@@ -105,6 +106,10 @@ class CieConsentDataUsageScreen extends React.Component<Props, State> {
     )(event);
     // URL can be loaded if it's not the login URL containing the session token - this avoids
     // making a (useless) GET request with the session in the URL
+    const shouldLoad = !isLoginUrlWithToken && !this.loadedUrls.has(event.url);
+    if (shouldLoad) {
+      this.loadedUrls.add(event.url);
+    }
     return !isLoginUrlWithToken;
   };
 
