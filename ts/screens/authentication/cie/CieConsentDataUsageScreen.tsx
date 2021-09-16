@@ -110,7 +110,7 @@ class CieConsentDataUsageScreen extends React.Component<Props, State> {
     if (shouldLoad) {
       this.loadedUrls.add(event.url);
     }
-    return !isLoginUrlWithToken;
+    return shouldLoad;
   };
 
   private handleLoginFailure = (errorCode?: string) => {
