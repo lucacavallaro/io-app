@@ -149,9 +149,6 @@ export const cleanTransactionDescription = (description: string): string => {
 export const getErrorDescription = (
   error?: keyof typeof DetailEnum
 ): string | undefined => {
-  if (error === undefined) {
-    return undefined;
-  }
   switch (error) {
     case "PAYMENT_DUPLICATED":
       return I18n.t("wallet.errors.PAYMENT_DUPLICATED");
@@ -173,7 +170,7 @@ export const getErrorDescription = (
 };
 
 type MainMacros = "TECHNICAL" | "DATA" | "EC";
-
+type DetailV2Keys = keyof typeof Detail_v2Enum;
 export type ErrorMacros =
   | MainMacros
   | "REVOKED"
@@ -182,9 +179,7 @@ export type ErrorMacros =
   | "DUPLICATED"
   | "UNCOVERED";
 
-const technicalSet: Set<keyof typeof Detail_v2Enum> = new Set<
-  keyof typeof Detail_v2Enum
->([
+const technicalSet: Set<DetailV2Keys> = new Set<keyof typeof Detail_v2Enum>([
   "PPT_PSP_SCONOSCIUTO",
   "PPT_PSP_DISABILITATO",
   "PPT_INTERMEDIARIO_PSP_SCONOSCIUTO",
@@ -264,27 +259,10 @@ export const getErrorDescriptionV2 = (
   if (error === undefined) {
     return undefined;
   }
-
   const errorMacro = getV2ErrorMacro(error);
-
-  switch (errorMacro) {
-    case "TECHNICAL":
-      return I18n.t("wallet.errors.TECHNICAL");
-    case "DATA":
-      return I18n.t("wallet.errors.DATA");
-    case "EC":
-      return I18n.t("wallet.errors.EC");
-    case "ONGOING":
-      return I18n.t("wallet.errors.PAYMENT_ONGOING");
-    case "REVOKED":
-      return I18n.t("wallet.errors.REVOKED");
-    case "EXPIRED":
-      return I18n.t("wallet.errors.EXPIRED");
-    case "DUPLICATED":
-      return I18n.t("wallet.errors.PAYMENT_DUPLICATED");
-    default:
-      return I18n.t("wallet.errors.GENERIC_ERROR");
-  }
+  return I18n.t(`"wallet.errors.${errorMacro}`, {
+    defaultValue: I18n.t("wallet.errors.GENERIC_ERROR")
+  });
 };
 
 export const getPaymentHistoryDetails = (payment: PaymentHistory): string =>
