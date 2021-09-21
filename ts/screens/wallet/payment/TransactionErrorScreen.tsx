@@ -131,11 +131,23 @@ export const errorTransactionUIElements = (
     ? imageMapping[errorMacro]
     : require(baseIconPath + "/wallet/errors/generic-error-icon.png");
 
-  const sendReportButtons = [
+  const sendReportButtonConfirm = [
     confirmButtonProps(
       () => requestAssistanceForPaymentFailure(rptId),
       I18n.t("wallet.errors.sendReport")
     )
+  ];
+  const sendReportButtonCancel = [
+    cancelButtonProps(
+      () => requestAssistanceForPaymentFailure(rptId),
+      I18n.t("wallet.errors.sendReport")
+    )
+  ];
+  const closeButtonCancel = [
+    cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
+  ];
+  const closeButtonConfirm = [
+    confirmButtonProps(onCancel, I18n.t("global.buttons.close"))
   ];
 
   switch (errorMacro) {
@@ -144,32 +156,33 @@ export const errorTransactionUIElements = (
         image,
         title: I18n.t("wallet.errors.TECHNICAL"),
         subtitle,
-        footerButtons: sendReportButtons
+        footerButtons: [
+          ...sendReportButtonConfirm,
+          cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
+        ]
       };
     case "DATA":
       return {
         image,
         title: I18n.t("wallet.errors.DATA"),
         subtitle,
-        footerButtons: sendReportButtons
+        footerButtons: [
+          confirmButtonProps(onCancel, I18n.t("global.buttons.back")),
+          ...sendReportButtonCancel
+        ]
       };
     case "EC":
       return {
         image,
         title: I18n.t("wallet.errors.EC"),
         subtitle,
-        footerButtons: [
-          ...sendReportButtons,
-          cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
-        ]
+        footerButtons: [...sendReportButtonConfirm, ...closeButtonCancel]
       };
     case "DUPLICATED":
       return {
         image,
         title: I18n.t("wallet.errors.PAYMENT_DUPLICATED"),
-        footerButtons: [
-          cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
-        ]
+        footerButtons: closeButtonCancel
       };
     case "ONGOING":
       return {
@@ -180,10 +193,7 @@ export const errorTransactionUIElements = (
             {I18n.t("wallet.errors.ONGOING_SUBTITLE")}
           </H4>
         ),
-        footerButtons: [
-          confirmButtonProps(onCancel, I18n.t("global.buttons.close")),
-          ...sendReportButtons
-        ]
+        footerButtons: [...closeButtonConfirm, ...sendReportButtonCancel]
       };
     case "EXPIRED":
       return {
@@ -194,9 +204,7 @@ export const errorTransactionUIElements = (
             {I18n.t("wallet.errors.contactECsubtitle")}
           </H4>
         ),
-        footerButtons: [
-          cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
-        ]
+        footerButtons: [...closeButtonCancel]
       };
     case "REVOKED":
       return {
@@ -207,9 +215,7 @@ export const errorTransactionUIElements = (
             {I18n.t("wallet.errors.contactECsubtitle")}
           </H4>
         ),
-        footerButtons: [
-          cancelButtonProps(onCancel, I18n.t("global.buttons.close"))
-        ]
+        footerButtons: [...closeButtonCancel]
       };
     case "UNCOVERED":
     default:
@@ -217,10 +223,7 @@ export const errorTransactionUIElements = (
         image,
         title: I18n.t("wallet.errors.GENERIC_ERROR"),
         subtitle,
-        footerButtons: [
-          confirmButtonProps(onCancel, I18n.t("global.buttons.close")),
-          ...sendReportButtons
-        ]
+        footerButtons: [...closeButtonConfirm, ...sendReportButtonCancel]
       };
   }
 };
