@@ -2,23 +2,25 @@
  * Generators to manage messages and related services.
  */
 
-import { none, Option, some } from "fp-ts/lib/Option";
+// import { none, Option, some } from "fp-ts/lib/Option";
 import * as pot from "italia-ts-commons/lib/pot";
 
 import { readableReport } from "italia-ts-commons/lib/reporters";
-import { Task } from "redux-saga";
+// import { Task } from "redux-saga";
 import {
   all,
   call,
-  cancel,
+  // cancel,
   cancelled,
   Effect,
-  fork,
+  // fork,
   put,
   select,
-  take
+  // take,
+  takeLatest
 } from "redux-saga/effects";
-import { ActionType, getType, isActionOf } from "typesafe-actions";
+// import { ActionType, getType, isActionOf } from "typesafe-actions";
+import { getType } from "typesafe-actions";
 import { BackendClient } from "../../api/backend";
 import { sessionExpired } from "../../store/actions/authentication";
 import {
@@ -34,6 +36,7 @@ import { messagesStatusSelector } from "../../store/reducers/entities/messages/m
 import { servicesByIdSelector } from "../../store/reducers/entities/services/servicesById";
 import { SagaCallReturnType } from "../../types/utils";
 import { uniqueItem } from "../../utils/enumerables";
+// import { isDefined } from "../../utils/guards";
 
 /**
  * A generator to load messages from the Backend.
@@ -184,26 +187,45 @@ export function* loadMessages(
 export function* watchMessagesLoadOrCancelSaga(
   getMessages: ReturnType<typeof BackendClient>["getMessages"]
 ): Generator<Effect, void, any> {
+  yield takeLatest(getType(loadMessagesAction.request), () =>
+    loadMessages(getMessages)
+  );
+
   // We store the latest task so we can also cancel it
   // eslint-disable-next-line
-  let lastTask: Option<Task> = none;
-  while (true) {
-    // FIXME: why not takeLatest?
-    // Wait for MESSAGES_LOAD_REQUEST
-    const action: ActionType<typeof loadMessagesAction["request"]> = yield take(
-      getType(loadMessagesAction.request)
-    );
-    if (lastTask.isSome()) {
-      // If there is an already running task cancel it
-      yield cancel(lastTask.value);
-      lastTask = none;
-    }
+  // let lastTask: Option<Task> = none;
+  // console.log("============== begin ==========");
+  // let counter = 0;
+  // while (true) {
+  // FIXME: why not takeLatest?
+  // Wait for MESSAGES_LOAD_REQUEST
+  // const action: ActionType<typeof loadMessagesAction["request"]> = yield take(
+  //   getType(loadMessagesAction.request)
+  // );
 
-    // If the action received is a MESSAGES_LOAD_REQUEST send the request
-    // Otherwise it is a MESSAGES_LOAD_CANCEL and we just need to continue the loop
-    if (isActionOf(loadMessagesAction.request, action)) {
-      // Call the generator to load messages
-      lastTask = some(yield fork(loadMessages, getMessages));
-    }
-  }
+  // if (isActionOf(loadMessagesAction.request, action)) {
+  //   yield fork(loadMessages, getMessages);
+  // }
+
+  // if (lastTask.isSome()) {
+  //   // If there is an already running task cancel it
+  //   yield cancel(lastTask.value);
+  //   lastTask = none;
+  // }
+  //
+  // // console.log(
+  // //   "che e' action? ",
+  // //   action,
+  // //   isActionOf(loadMessagesAction.request, action)
+  // // );
+  // // If the action received is a MESSAGES_LOAD_REQUEST send the request
+  // // Otherwise it is a MESSAGES_LOAD_CANCEL and we just need to continue the loop
+  // if (isActionOf(loadMessagesAction.request, action)) {
+  //   // console.log("dovrei yieldare");
+  //   // Call the generator to load messages
+  //   lastTask = some(yield fork(loadMessages, getMessages));
+  // } else {
+  //   // console.log("e invece no!");
+  // }
+  // }
 }

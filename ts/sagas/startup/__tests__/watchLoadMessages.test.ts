@@ -18,7 +18,13 @@ import {
 } from "../../../store/reducers/entities/messages/messagesById";
 import { messagesStatusSelector } from "../../../store/reducers/entities/messages/messagesStatus";
 import { servicesByIdSelector } from "../../../store/reducers/entities/services/servicesById";
-import { loadMessages } from "../../startup/watchLoadMessagesSaga";
+import {
+  loadMessages,
+  watchMessagesLoadOrCancelSaga
+} from "../../startup/watchLoadMessagesSaga";
+import { getType } from "typesafe-actions";
+import { cancel, fork, take } from "redux-saga-test-plan/matchers";
+import { createMockTask } from "@redux-saga/testing-utils";
 
 const testMessageId1 = "01BX9NSMKAAAS5PSP2FATZM6BQ";
 const testMessageId2 = "01CD4QN3Q2KS2T791PPMT2H9DM";
@@ -103,6 +109,41 @@ const cachedMessagesAllIds: ReadonlyArray<string> = [
 ];
 
 describe("watchLoadMessages", () => {
+  describe.only("watchMessagesLoadOrCancelSaga test plan", () => {
+    describe(`when two actions ${getType(
+      loadMessagesAction.request
+    )} are fired`, () => {
+      const getMessages = jest.fn();
+      const generator = watchMessagesLoadOrCancelSaga(getMessages);
+
+      it(`should wait for ${getType(loadMessagesAction.request)}`, () => {
+        expect(generator.next().value).toStrictEqual(
+          take(getType(loadMessagesAction.request))
+        );
+      });
+
+      it("should fork to loadMessages on the first action", () => {
+        expect(
+          generator.next(loadMessagesAction.request()).value
+        ).toStrictEqual(fork(loadMessages, getMessages));
+      });
+
+      it("should cancel the task on the second action and fork again", () => {
+        const mockTask = createMockTask();
+
+        generator.next(mockTask);
+
+        expect(
+          generator.next(loadMessagesAction.request()).value
+        ).toStrictEqual(cancel(mockTask));
+
+        expect(generator.next().value).toStrictEqual(
+          fork(loadMessages, getMessages)
+        );
+      });
+    });
+  });
+
   describe("loadMessages test plan", () => {
     it("should put MESSAGES_LOAD_FAILURE with the Error it the getMessages response is an Error", () => {
       const getMessages = jest.fn();
